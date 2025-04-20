@@ -1,3 +1,5 @@
 yaeos
 streamlit
 plotly
+numpy
+pandas
