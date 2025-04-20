@@ -3,4 +3,4 @@ name = "yaeos_gui"
 version = "0.1.0"
 description = "Yet Another EOS GUI"
 requires-python = ">=3.8"
-dependencies = ["gradio", "streamlit", "yaeos"]
+dependencies = ["streamlit", "yaeos"]
