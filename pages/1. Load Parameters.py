@@ -1,4 +1,4 @@
-from yaeos_gui.settings import orchestra
+from settings import orchestra
 
 
 orchestra.select_model()

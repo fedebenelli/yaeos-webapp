@@ -2,7 +2,7 @@ import pandas as pd
 
 import streamlit as st
 
-from yaeos_gui.settings import orchestra
+from settings import orchestra
 
 
 st.set_page_config(page_title="Aplicación de Ejemplos", layout="wide")

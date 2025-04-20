@@ -2,7 +2,7 @@ import pandas as pd
 
 import streamlit as st
 
-from yaeos_gui.constants import AR_MODELS
+from constants import AR_MODELS
 
 
 class ModelSettings:

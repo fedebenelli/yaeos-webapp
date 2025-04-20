@@ -4,7 +4,7 @@ import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import numpy as np
 
-from yaeos_gui.settings import orchestra
+from settings import orchestra
 
 orchestra.show_critical_constants()
 
