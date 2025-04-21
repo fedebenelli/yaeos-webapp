@@ -53,7 +53,7 @@ fig.add_scatter(
     x=critical_line_hpll["T"],
     y=critical_line_hpll["P"],
     mode="lines",
-    name="Critical Line 2 -> 1",
+    name="Critical Line LL",
 )
 
 st.plotly_chart(fig, use_container_width=False)

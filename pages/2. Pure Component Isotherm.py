@@ -14,6 +14,13 @@ which = st.selectbox(
     options=[i+1 for i in range(len(model_params))]
     )
 
+resolution = st.number_input(
+    "Resolution",
+    min_value=1,
+    value=1000,
+    step=1,
+)
+
 temperature = st.number_input(
     "Temperature [K]",
     min_value=0.0,
@@ -28,8 +35,8 @@ w = [model_params["w"].values[which-1]]
 
 model = model_setter(Tc, Pc, w)
 
-ps = np.linspace(1e-1, 1000, 10000)
-vs = [model.volume([1], pressure=p, temperature=temperature) for p in ps]
+ps = np.linspace(1e-1, 1000, resolution)
+vs = np.array([model.volume([1], pressure=p, temperature=temperature) for p in ps])
 
 fig = px.line(
     {"ps": ps, "vs": vs},
