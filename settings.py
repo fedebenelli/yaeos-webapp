@@ -40,8 +40,11 @@ class ModelSettings:
             st.session_state.critical_constants = editor
 
     def show_critical_constants(self):
-        st.subheader("📊 Constantes críticas")
-        st.dataframe(st.session_state.critical_constants, use_container_width=True)
+        st.subheader("Critical Constants")
+        try:
+            st.dataframe(st.session_state.critical_constants, use_container_width=True)
+        except:
+            st.write("No critical constants available.")
 
 
 orchestra = ModelSettings()
