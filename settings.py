@@ -6,6 +6,12 @@ import streamlit as st
 
 from constants import AR_MODELS, AR_MIXING_RULES, GE_MODELS, setup_nrtl
 
+from setters import (
+    setup_qmr,
+    setup_qmrtd,
+    setup_nrtl,
+)
+
 
 class ModelSettings:
     def __init__(self): ...
@@ -16,6 +22,13 @@ class ModelSettings:
             "Select the thermodynamic model to be used in the calculations."
         )
 
+        if "model_ar_index" not in st.session_state:
+            st.session_state.model_ar_index = 0
+        if "mixing_rule_index" not in st.session_state:
+            st.session_state.mixing_rule_index = 0
+        if "model_ge_index" not in st.session_state:
+            st.session_state.model_ge_index = 0
+
         c1, c2 = st.columns(2)
         with c1:
             st.subheader("Model")
@@ -25,7 +38,7 @@ class ModelSettings:
             selected_model = st.selectbox(
                 "Model to use:",
                 options=AR_MODELS,
-                index=0,
+                index=st.session_state.model_ar_index,
                 format_func=lambda x: x.replace("_", " "),
             )
         with c2:
@@ -36,9 +49,16 @@ class ModelSettings:
             mixing_rule = st.selectbox(
                 "Mixing Rule",
                 options=AR_MIXING_RULES,
-                index=0,
+                index=st.session_state.mixing_rule_index,
                 format_func=lambda x: x.replace("_", " "),
             )
+
+        st.session_state.model_ar_index = list(AR_MODELS.keys()).index(
+            selected_model
+        )
+        st.session_state.mixing_rule_index = list(
+            AR_MIXING_RULES.keys()
+        ).index(mixing_rule)
 
         st.session_state.selected_model = selected_model
         st.session_state.model_setter = AR_MODELS[selected_model]["setter"]
@@ -65,7 +85,7 @@ class ModelSettings:
             hide_index=True,
         )
 
-        if st.button("Save data"):
+        if st.button("Save critical constants"):
             st.session_state.critical_constants = editor
 
     def show_critical_constants(self):
@@ -78,7 +98,13 @@ class ModelSettings:
             st.write("No critical constants available.")
 
     def setup_model(self):
-        self.edit_critical_constants()
+
+        c1, c2 = st.columns(2)
+
+        with c1:
+            self.edit_critical_constants()
+        with c2:
+            self.select_model()
 
         Tc = st.session_state.critical_constants["Tc [K]"].values
         Pc = st.session_state.critical_constants["Pc [bar]"].values
@@ -126,21 +152,18 @@ class ModelSettings:
             mixing_rule = setup_qmr(nc, mixing_rule_setter)
         elif mixing_rule_name == "QMRTD":
             mixing_rule = setup_qmrtd(nc, mixing_rule_setter)
-
         elif mixing_rule_name in ("MHV1", "HV"):
             ge_model_name = st.selectbox(r"$G^E$ Model", GE_MODELS, index=0)
             ge_model_setter = GE_MODELS[ge_model_name]["setter"]
 
-            st.text("Define the $G^E$ model parameters")
             if ge_model_name == "NRTL":
-                st.subheader("NRTL Parameters")
                 ge_model = ge_model_setter(nc)
 
             if mixing_rule_name == "MHV1":
                 st.subheader("Mixing Rule Parameters")
                 q = st.number_input(label="q", value=-0.5, step=0.01)
                 mixing_rule = mixing_rule_setter(q=q, ge=ge_model)
-            elif ge_model_name == "HV":
+            elif mixing_rule_name == "HV":
                 mixing_rule = mixing_rule_setter(ge_model)
 
         if model_name in (
@@ -167,56 +190,6 @@ class ModelSettings:
 
         st.session_state.nc = nc
         st.session_state.model = model
-
-
-def setup_qmr(nc, setter):
-    kij = np.zeros((nc, nc))
-    lij = np.zeros((nc, nc))
-
-    kij = pd.DataFrame(kij)
-    lij = pd.DataFrame(lij)
-
-    st.subheader("Interaction Parameters")
-    st.subheader("$k_{ij}$ matrix")
-    kij = st.data_editor(kij, num_rows=nc, hide_index=True, key="kij")
-    st.subheader("$l_{ij}$ matrix")
-    lij = st.data_editor(lij, num_rows=nc, hide_index=True, key="lij")
-
-    kij = np.array(kij.values, order="F", dtype=np.float64)
-    lij = np.array(lij.values, order="F", dtype=np.float64)
-
-    return setter(kij=kij, lij=lij)
-
-
-def setup_qmrtd(nc, setter):
-    kij_0 = np.zeros((nc, nc))
-    kij_inf = np.zeros((nc, nc))
-    lij = np.zeros((nc, nc))
-    tref = np.zeros((nc, nc))
-
-    kij_0 = pd.DataFrame(kij_0)
-    kij_inf = pd.DataFrame(kij_inf)
-    lij = pd.DataFrame(lij)
-    tref = pd.DataFrame(tref)
-
-    st.subheader("Interaction Parameters")
-
-    st.subheader("$k_{ij}^0$ matrix")
-    kij_0 = st.data_editor(kij_0, num_rows=nc, hide_index=True, key="kij_0")
-    st.subheader("$k_{ij}^\infty$ matrix")
-    kij_inf = st.data_editor(
-        kij_inf, num_rows=nc, hide_index=True, key="kij_inf"
-    )
-    st.subheader("$l_{ij}$ matrix")
-    lij = st.data_editor(lij, num_rows=nc, hide_index=True, key="lij")
-    kij_0 = np.array(kij_0.values, order="F", dtype=np.float64)
-    kij_inf = np.array(kij_inf.values, order="F", dtype=np.float64)
-    lij = np.array(lij.values, order="F", dtype=np.float64)
-
-    st.subheader("$T_{ref}$ matrix")
-    tref = st.data_editor(tref, num_rows=nc, hide_index=True, key="tref")
-
-    return setter(kij_0=kij_0, kij_inf=kij_inf, lij=lij, t_ref=tref)
 
 
 orchestra = ModelSettings()

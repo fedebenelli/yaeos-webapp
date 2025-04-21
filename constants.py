@@ -6,29 +6,9 @@ import pandas as pd
 
 import streamlit as st
 
+from collections import OrderedDict
 
-def setup_nrtl(nc):
-
-    a, b, c = np.zeros((nc, nc)), np.zeros((nc, nc)), np.zeros((nc, nc))
-
-    a = pd.DataFrame(a)
-    b = pd.DataFrame(b)
-    c = pd.DataFrame(c)
-
-    c1, c2, c3 = st.columns(3)
-
-    with c1:
-        a = st.data_editor(a, key="a", num_rows=nc, use_container_width=True)
-    with c2:
-        b = st.data_editor(b, key="b", num_rows=nc, use_container_width=True)
-    with c3:
-        c = st.data_editor(c, key="c", num_rows=nc, use_container_width=True)
-
-    a = np.array(a.to_numpy(), order="F")
-    b = np.array(b.to_numpy(), order="F")
-    c = np.array(c.to_numpy(), order="F")
-
-    return yaeos.NRTL(a, b, c)
+from setters import setup_nrtl
 
 
 AR_MODELS = {
@@ -47,6 +27,6 @@ AR_MIXING_RULES = {
 }
 
 GE_MODELS = {
-    "UNIFAC_VLE": {"setter": yaeos.UNIFACVLE},
     "NRTL": {"setter": setup_nrtl},
+    # "UNIFAC_VLE": {"setter": yaeos.UNIFACVLE},
 }
