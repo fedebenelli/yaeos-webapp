@@ -7,11 +7,12 @@ from settings import orchestra
 
 orchestra.show_critical_constants()
 
-model_setter = st.session_state.model_setter
-model_params = st.session_state.critical_constants
+model = st.session_state.model
+nc = st.session_state.nc
+
 which = st.selectbox(
     "Number of component",
-    options=[i+1 for i in range(len(model_params))]
+    options=[i+1 for i in range(nc)]
     )
 
 resolution = st.number_input(
@@ -27,13 +28,6 @@ temperature = st.number_input(
     value=273.15,
     step=5.0,
 )
-
-
-Tc = [model_params["Tc"].values[which-1]]
-Pc = [model_params["Tc"].values[which-1]]
-w = [model_params["w"].values[which-1]]
-
-model = model_setter(Tc, Pc, w)
 
 ps = np.linspace(1e-1, 1000, resolution)
 vs = np.array([model.volume([1], pressure=p, temperature=temperature) for p in ps])

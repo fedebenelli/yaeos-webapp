@@ -2,6 +2,8 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
+import pandas as pd
+from io import BytesIO
 
 model_setter = st.session_state.model_setter
 model_params = st.session_state.critical_constants
@@ -9,22 +11,21 @@ model_params = st.session_state.critical_constants
 z0 = [1, 0]
 zi = [0, 1]
 
-Tc = model_params["Tc"].values
-Pc = model_params["Tc"].values
-w = model_params["w"].values
+model = st.session_state.model
 
-model = model_setter(Tc, Pc, w)
+x20 = 1e-3
+x10 = 1 - x20
 
 pure_psat_1 = model.pure_saturation_pressures(1)
 pure_psat_2 = model.pure_saturation_pressures(2)
 
 critical_line = model.critical_line(
     z0=z0, zi=zi,
-    a0=0.999, s=0.999, ds0=-1e-2, max_points=5000)
+    a0=x10, s=x10, ds0=-1e-3, max_points=5000)
 
 critical_line_hpll = model.critical_line(
     z0=z0, zi=zi,
-    a0=0.5, s=np.log(2000), ds0=-1e-2,
+    a0=0.5, s=np.log(2000), ds0=-1e-3,
     ns=4,
     max_points=5000)
 
@@ -57,3 +58,22 @@ fig.add_scatter(
 )
 
 st.plotly_chart(fig, use_container_width=False)
+
+df_1 = pd.DataFrame(pure_psat_1)
+df_2 = pd.DataFrame(pure_psat_2)
+df_cl21 = pd.DataFrame(critical_line)
+df_clhpll = pd.DataFrame(critical_line_hpll)
+
+
+buffer = BytesIO()
+file_name = "gpec.xlsx"
+
+with pd.ExcelWriter(buffer) as writer:
+    df_1.to_excel(writer, sheet_name="pure_psat_1")
+    df_2.to_excel(writer, sheet_name="pure_psat_2")
+    df_cl21.to_excel(writer, sheet_name="critical_line")
+    df_clhpll.to_excel(writer, sheet_name="critical_line_hpll")
+
+st.download_button(
+    label="Download as Excel File", data=buffer.getvalue(), 
+    file_name=file_name, mime="application/vnd.ms-excel")
