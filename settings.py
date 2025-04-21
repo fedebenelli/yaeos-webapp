@@ -8,14 +8,11 @@ from constants import AR_MODELS, AR_MIXING_RULES, GE_MODELS, setup_nrtl
 
 
 class ModelSettings:
-    def __init__(self):
-        ...
+    def __init__(self): ...
 
     def select_model(self):
         st.subheader("Model Selection")
-        st.write(
-            "Select the thermodynamic model to be used in the calculations."
-        )
+        st.write("Select the thermodynamic model to be used in the calculations.")
 
         c1, c2 = st.columns(2)
         with c1:
@@ -49,9 +46,7 @@ class ModelSettings:
     def edit_critical_constants(self):
 
         st.subheader("Critical Constants")
-        st.write(
-            "The critical constants are used to calculate the model parameters."
-        )
+        st.write("The critical constants are used to calculate the model parameters.")
 
         if "critical_constants" not in st.session_state:
             st.session_state.critical_constants = pd.DataFrame(
@@ -86,7 +81,6 @@ class ModelSettings:
 
         nc = len(Tc)
 
-
         if model_name == "RKPR":
             delta_1 = np.zeros(nc)
             k = np.zeros(nc)
@@ -103,7 +97,9 @@ class ModelSettings:
                 k = st.data_editor(k, num_rows=nc, hide_index=True, key="k")
             with c2:
                 st.subheader("$\delta_1$")
-                delta_1 = st.data_editor(delta_1, num_rows=nc, hide_index=True, key="delta_1")
+                delta_1 = st.data_editor(
+                    delta_1, num_rows=nc, hide_index=True, key="delta_1"
+                )
             with c3:
                 st.subheader("$z_c$")
                 zc = st.data_editor(zc, num_rows=nc, hide_index=True, key="zc")
@@ -129,19 +125,15 @@ class ModelSettings:
             if ge_model_name == "NRTL":
                 st.subheader("NRTL Parameters")
                 ge_model = ge_model_setter(nc)
+
             if mixing_rule_name == "MHV1":
                 st.subheader("Mixing Rule Parameters")
                 q = st.number_input(label="q", value=-0.5, step=0.01)
                 mixing_rule = mixing_rule_setter(q=q, ge=ge_model)
+            elif ge_model_name == "HV":
+                mixing_rule = mixing_rule_setter(ge_model)
 
-            # elif ge_model_name == "HV":
-            #     mixing_rule = setup_hv(nc, ge_model_setter)
-
-
-
-        if model_name in (
-            "SoaveRedlichKong", "PengRobinson76", "PengRobinson78"
-        ):
+        if model_name in ("SoaveRedlichKong", "PengRobinson76", "PengRobinson78"):
             model = model_setter(
                 critical_temperatures=Tc,
                 critical_pressures=Pc,
@@ -156,7 +148,7 @@ class ModelSettings:
                 k=k,
                 delta_1=delta_1,
                 mixrule=mixing_rule,
-                critical_z=zc
+                critical_z=zc,
             )
 
         st.session_state.nc = nc
@@ -166,11 +158,11 @@ class ModelSettings:
 def setup_qmr(nc, setter):
     kij = np.zeros((nc, nc))
     lij = np.zeros((nc, nc))
-    
+
     kij = pd.DataFrame(kij)
     lij = pd.DataFrame(lij)
 
-    st.subheader("Interaction Parameters")                
+    st.subheader("Interaction Parameters")
     st.subheader("$k_{ij}$ matrix")
     kij = st.data_editor(kij, num_rows=nc, hide_index=True, key="kij")
     st.subheader("$l_{ij}$ matrix")
@@ -193,7 +185,7 @@ def setup_qmrtd(nc, setter):
     lij = pd.DataFrame(lij)
     tref = pd.DataFrame(tref)
 
-    st.subheader("Interaction Parameters")                
+    st.subheader("Interaction Parameters")
 
     st.subheader("$k_{ij}^0$ matrix")
     kij_0 = st.data_editor(kij_0, num_rows=nc, hide_index=True, key="kij_0")

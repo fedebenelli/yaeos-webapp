@@ -47,31 +47,33 @@ if "critical_constants" in st.session_state:
         pure_psat_2 = model.pure_saturation_pressures(2)
 
         critical_line_21 = model.critical_line(
-            z0=z0, zi=zi,
-            a0=a0, s=a0, ds0=-1e-3, max_points=5000)
+            z0=z0, zi=zi, a0=a0, s=a0, ds0=-1e-3, max_points=5000
+        )
 
         critical_line_12 = model.critical_line(
-            z0=z0, zi=zi,
-            a0=1e-5, s=1e-10, ds0=1e-5, max_points=5000)
+            z0=z0, zi=zi, a0=1e-5, s=1e-10, ds0=1e-5, max_points=5000
+        )
 
         critical_line_hpll = model.critical_line(
-            z0=z0, zi=zi,
-            a0=0.5, s=np.log(2000), ds0=-1e-3,
-            ns=4,
-            max_points=5000)
+            z0=z0, zi=zi, a0=0.5, s=np.log(2000), ds0=-1e-3, ns=4, max_points=5000
+        )
 
         c1, c2 = st.columns(2)
 
         with c1:
             fig = get_fig(
                 [pure_psat_1, pure_psat_2],
-                [critical_line_21, critical_line_12, critical_line_hpll], "T", "P"
+                [critical_line_21, critical_line_12, critical_line_hpll],
+                "T",
+                "P",
             )
             st.plotly_chart(fig, use_container_width=False)
         with c2:
             fig = get_fig(
                 [pure_psat_1, pure_psat_2],
-                [critical_line_21, critical_line_12, critical_line_hpll], "a", "P"
+                [critical_line_21, critical_line_12, critical_line_hpll],
+                "a",
+                "P",
             )
             st.plotly_chart(fig, use_container_width=False)
 
@@ -80,7 +82,6 @@ if "critical_constants" in st.session_state:
         df_cl21 = pd.DataFrame(critical_line_21)
         df_cl12 = pd.DataFrame(critical_line_12)
         df_clhpll = pd.DataFrame(critical_line_hpll)
-
 
         buffer = BytesIO()
         file_name = "gpec.xlsx"
@@ -92,8 +93,11 @@ if "critical_constants" in st.session_state:
             df_clhpll.to_excel(writer, sheet_name="critical_line_hpll")
 
         st.download_button(
-            label="Download as Excel File", data=buffer.getvalue(), 
-            file_name=file_name, mime="application/vnd.ms-excel")
+            label="Download as Excel File",
+            data=buffer.getvalue(),
+            file_name=file_name,
+            mime="application/vnd.ms-excel",
+        )
     else:
         st.warning("Please select a model and its parameters first.")
 else:

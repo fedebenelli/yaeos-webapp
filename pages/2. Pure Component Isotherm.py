@@ -10,10 +10,7 @@ orchestra.show_critical_constants()
 model = st.session_state.model
 nc = st.session_state.nc
 
-which = st.selectbox(
-    "Number of component",
-    options=[i+1 for i in range(nc)]
-    )
+which = st.selectbox("Number of component", options=[i + 1 for i in range(nc)])
 
 resolution = st.number_input(
     "Resolution",
