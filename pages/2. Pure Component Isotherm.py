@@ -27,7 +27,9 @@ temperature = st.number_input(
 )
 
 ps = np.linspace(1e-1, 1000, resolution)
-vs = np.array([model.volume([1], pressure=p, temperature=temperature) for p in ps])
+vs = np.array(
+    [model.volume([1], pressure=p, temperature=temperature) for p in ps]
+)
 
 fig = px.line(
     {"ps": ps, "vs": vs},

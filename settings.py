@@ -12,7 +12,9 @@ class ModelSettings:
 
     def select_model(self):
         st.subheader("Model Selection")
-        st.write("Select the thermodynamic model to be used in the calculations.")
+        st.write(
+            "Select the thermodynamic model to be used in the calculations."
+        )
 
         c1, c2 = st.columns(2)
         with c1:
@@ -41,12 +43,16 @@ class ModelSettings:
         st.session_state.selected_model = selected_model
         st.session_state.model_setter = AR_MODELS[selected_model]["setter"]
         st.session_state.mixing_rule = mixing_rule
-        st.session_state.mixing_rule_setter = AR_MIXING_RULES[mixing_rule]["setter"]
+        st.session_state.mixing_rule_setter = AR_MIXING_RULES[mixing_rule][
+            "setter"
+        ]
 
     def edit_critical_constants(self):
 
         st.subheader("Critical Constants")
-        st.write("The critical constants are used to calculate the model parameters.")
+        st.write(
+            "The critical constants are used to calculate the model parameters."
+        )
 
         if "critical_constants" not in st.session_state:
             st.session_state.critical_constants = pd.DataFrame(
@@ -54,7 +60,9 @@ class ModelSettings:
             )
 
         editor = st.data_editor(
-            st.session_state.critical_constants, num_rows="dynamic", hide_index=True
+            st.session_state.critical_constants,
+            num_rows="dynamic",
+            hide_index=True,
         )
 
         if st.button("Save data"):
@@ -63,7 +71,9 @@ class ModelSettings:
     def show_critical_constants(self):
         st.subheader("Critical Constants")
         try:
-            st.dataframe(st.session_state.critical_constants, use_container_width=True)
+            st.dataframe(
+                st.session_state.critical_constants, use_container_width=True
+            )
         except:
             st.write("No critical constants available.")
 
@@ -133,7 +143,11 @@ class ModelSettings:
             elif ge_model_name == "HV":
                 mixing_rule = mixing_rule_setter(ge_model)
 
-        if model_name in ("SoaveRedlichKong", "PengRobinson76", "PengRobinson78"):
+        if model_name in (
+            "SoaveRedlichKong",
+            "PengRobinson76",
+            "PengRobinson78",
+        ):
             model = model_setter(
                 critical_temperatures=Tc,
                 critical_pressures=Pc,
@@ -190,7 +204,9 @@ def setup_qmrtd(nc, setter):
     st.subheader("$k_{ij}^0$ matrix")
     kij_0 = st.data_editor(kij_0, num_rows=nc, hide_index=True, key="kij_0")
     st.subheader("$k_{ij}^\infty$ matrix")
-    kij_inf = st.data_editor(kij_inf, num_rows=nc, hide_index=True, key="kij_inf")
+    kij_inf = st.data_editor(
+        kij_inf, num_rows=nc, hide_index=True, key="kij_inf"
+    )
     st.subheader("$l_{ij}$ matrix")
     lij = st.data_editor(lij, num_rows=nc, hide_index=True, key="lij")
     kij_0 = np.array(kij_0.values, order="F", dtype=np.float64)

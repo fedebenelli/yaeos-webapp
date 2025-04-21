@@ -55,7 +55,13 @@ if "critical_constants" in st.session_state:
         )
 
         critical_line_hpll = model.critical_line(
-            z0=z0, zi=zi, a0=0.5, s=np.log(2000), ds0=-1e-3, ns=4, max_points=5000
+            z0=z0,
+            zi=zi,
+            a0=0.5,
+            s=np.log(2000),
+            ds0=-1e-3,
+            ns=4,
+            max_points=5000,
         )
 
         c1, c2 = st.columns(2)
