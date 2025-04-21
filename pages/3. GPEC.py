@@ -5,6 +5,32 @@ import numpy as np
 import pandas as pd
 from io import BytesIO
 
+
+def get_fig(psats, critical_lines, x_col, y_col):
+
+    fig = go.Figure()
+
+    if x_col == "T":
+        for i, psat in enumerate(psats):
+            fig.add_scatter(
+                x=psat["T"],
+                y=psat[y_col],
+                mode="lines",
+                name=f"Pure saturation pressure {i+1}",
+            )
+
+    for critical_line in critical_lines:
+        print(critical_line)
+        fig.add_scatter(
+            x=critical_line[x_col],
+            y=critical_line[y_col],
+            mode="lines",
+            name="Critical Line",
+        )
+
+    return fig
+
+
 model_setter = st.session_state.model_setter
 model_params = st.session_state.critical_constants
 
@@ -13,15 +39,18 @@ zi = [0, 1]
 
 model = st.session_state.model
 
-x20 = 1e-3
-x10 = 1 - x20
+a0 = 1 - 1e-3
 
 pure_psat_1 = model.pure_saturation_pressures(1)
 pure_psat_2 = model.pure_saturation_pressures(2)
 
-critical_line = model.critical_line(
+critical_line_21 = model.critical_line(
     z0=z0, zi=zi,
-    a0=x10, s=x10, ds0=-1e-3, max_points=5000)
+    a0=a0, s=a0, ds0=-1e-3, max_points=5000)
+
+critical_line_12 = model.critical_line(
+    z0=z0, zi=zi,
+    a0=1e-5, s=1e-10, ds0=1e-5, max_points=5000)
 
 critical_line_hpll = model.critical_line(
     z0=z0, zi=zi,
@@ -29,39 +58,26 @@ critical_line_hpll = model.critical_line(
     ns=4,
     max_points=5000)
 
-fig = px.line(
-    x=pure_psat_1["T"],
-    y=pure_psat_1["P"],
-    labels={"x": "T [K]", "y": "P [bar]"},
-    title="Pure saturation pressure",
-)
 
-fig.add_scatter(
-    x=pure_psat_2["T"],
-    y=pure_psat_2["P"],
-    mode="lines",
-    name="Pure saturation pressure 2",
-)
+c1, c2 = st.columns(2)
 
-fig.add_scatter(
-    x=critical_line["T"],
-    y=critical_line["P"],
-    mode="lines",
-    name="Critical Line 2 -> 1",
-)
-
-fig.add_scatter(
-    x=critical_line_hpll["T"],
-    y=critical_line_hpll["P"],
-    mode="lines",
-    name="Critical Line LL",
-)
-
-st.plotly_chart(fig, use_container_width=False)
+with c1:
+    fig = get_fig(
+        [pure_psat_1, pure_psat_2],
+        [critical_line_21, critical_line_12, critical_line_hpll], "T", "P"
+    )
+    st.plotly_chart(fig, use_container_width=False)
+with c2:
+    fig = get_fig(
+        [pure_psat_1, pure_psat_2],
+        [critical_line_21, critical_line_12, critical_line_hpll], "a", "P"
+    )
+    st.plotly_chart(fig, use_container_width=False)
 
 df_1 = pd.DataFrame(pure_psat_1)
 df_2 = pd.DataFrame(pure_psat_2)
-df_cl21 = pd.DataFrame(critical_line)
+df_cl21 = pd.DataFrame(critical_line_21)
+df_cl12 = pd.DataFrame(critical_line_12)
 df_clhpll = pd.DataFrame(critical_line_hpll)
 
 
