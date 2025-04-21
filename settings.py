@@ -167,7 +167,7 @@ class ModelSettings:
                 mixing_rule = mixing_rule_setter(ge_model)
 
         if model_name in (
-            "SoaveRedlichKong",
+            "SoaveRedlichKwong",
             "PengRobinson76",
             "PengRobinson78",
         ):
