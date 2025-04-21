@@ -4,7 +4,7 @@ import pandas as pd
 
 import streamlit as st
 
-from constants import AR_MODELS, AR_MIXING_RULES
+from constants import AR_MODELS, AR_MIXING_RULES, GE_MODELS, setup_nrtl
 
 
 class ModelSettings:
@@ -120,6 +120,24 @@ class ModelSettings:
             mixing_rule = setup_qmr(nc, mixing_rule_setter)
         elif mixing_rule_name == "QMRTD":
             mixing_rule = setup_qmrtd(nc, mixing_rule_setter)
+
+        elif mixing_rule_name in ("MHV1", "HV"):
+            ge_model_name = st.selectbox(r"$G^E$ Model", GE_MODELS, index=0)
+            ge_model_setter = GE_MODELS[ge_model_name]["setter"]
+
+            st.text("Define the $G^E$ model parameters")
+            if ge_model_name == "NRTL":
+                st.subheader("NRTL Parameters")
+                ge_model = ge_model_setter(nc)
+            if mixing_rule_name == "MHV1":
+                st.subheader("Mixing Rule Parameters")
+                q = st.number_input(label="q", value=-0.5, step=0.01)
+                mixing_rule = mixing_rule_setter(q=q, ge=ge_model)
+
+            # elif ge_model_name == "HV":
+            #     mixing_rule = setup_hv(nc, ge_model_setter)
+
+
 
         if model_name in (
             "SoaveRedlichKong", "PengRobinson76", "PengRobinson78"
