@@ -7,7 +7,7 @@ from settings import orchestra
 st.set_page_config(page_title="Aplicación de Ejemplos", layout="wide")
 st.sidebar.title("Yaeos WebApp")
 
-st.title("Yaeos GUI")
+st.title("Yaeos WebApp")
 st.markdown(
     """
 Welcome to the yaeos WebApp!
