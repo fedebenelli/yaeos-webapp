@@ -15,9 +15,10 @@ if "critical_constants" in st.session_state:
         model = st.session_state.model
 
         nc = len(model_params["Tc [K]"])
+        t0 = model_params["Tc [K]"].mean()
+        p0 = model_params["Pc [bar]"].mean()
         z = np.ones(nc)
         z = z/sum(z)
-
 
         c1, c2 = st.columns(2)
         with c1:
@@ -41,8 +42,8 @@ if "critical_constants" in st.session_state:
                 )
 
             if st.button("Calculate Phase Envelope"):
-                dew = model.phase_envelope_pt(z, kind="dew", t0=500, p0=0.1)
-                bub = model.phase_envelope_pt(z, kind="bubble", t0=200, p0=100)
+                dew = model.phase_envelope_pt(z, kind="dew", t0=t0, p0=0.1)
+                bub = model.phase_envelope_pt(z, kind="bubble", t0=200, p0=p0)
         with c2:
             if dew and bub:
                 fig = go.Figure()
