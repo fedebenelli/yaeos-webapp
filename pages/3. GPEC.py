@@ -45,17 +45,15 @@ if "critical_constants" in st.session_state:
         pure_psat_1 = model.pure_saturation_pressures(1)
         pure_psat_2 = model.pure_saturation_pressures(2)
 
-        critical_line_21, cep_21 = model.critical_line(
+        critical_line_21 = model.critical_line(
             z0=z0, zi=zi, a0=a0, s=a0, ds0=-1e-1, max_points=5000,
-            stability_analysis=True
         )
 
-        critical_line_12, cep_12 = model.critical_line(
+        critical_line_12 = model.critical_line(
             z0=z0, zi=zi, a0=1e-5, s=1e-5, ds0=1e-2, max_points=5000,
-            stability_analysis=True
         )
 
-        critical_line_hpll, cep_ll = model.critical_line(
+        critical_line_hpll = model.critical_line(
             z0=z0,
             zi=zi,
             a0=0.5,
@@ -63,7 +61,6 @@ if "critical_constants" in st.session_state:
             ds0=-1e-1,
             ns=4,
             max_points=5000,
-            stability_analysis=True
         )
 
         c1, c2 = st.columns(2)
