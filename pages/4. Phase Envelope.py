@@ -42,7 +42,7 @@ if "critical_constants" in st.session_state:
                 )
 
             if st.button("Calculate Phase Envelope"):
-                dew = model.phase_envelope_pt(z, kind="dew", t0=t0, p0=0.1)
+                dew = model.phase_envelope_pt(z, kind="dew", t0=t0, p0=1)
                 bub = model.phase_envelope_pt(z, kind="bubble", t0=200, p0=p0)
         with c2:
             if dew and bub:
