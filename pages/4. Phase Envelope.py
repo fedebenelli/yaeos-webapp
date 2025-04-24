@@ -15,8 +15,8 @@ if "critical_constants" in st.session_state:
         model = st.session_state.model
 
         nc = len(model_params["Tc [K]"])
-        t0 = model_params["Tc [K]"].mean()
-        p0 = model_params["Pc [bar]"].mean()
+        t0 = model_params["Tc [K]"].to_numeric().mean()
+        p0 = model_params["Pc [bar]"].to_numeric().mean()
         z = np.ones(nc)
         z = z/sum(z)
 
