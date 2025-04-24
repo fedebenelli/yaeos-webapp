@@ -76,14 +76,17 @@ class ModelSettings:
 
         if "critical_constants" not in st.session_state:
             st.session_state.critical_constants = pd.DataFrame(
-                columns=["Tc [K]", "Pc [bar]", "w"],
+                columns=["name", "Tc [K]", "Pc [bar]", "w"],
             )
+            st.session_state.critical_constants = st.session_state.critical_constants.set_index("name")
 
         editor = st.data_editor(
             st.session_state.critical_constants,
             num_rows="dynamic",
-            hide_index=True,
+            hide_index=False,
         )
+
+        print(editor)
 
         if st.button("Save critical constants"):
             st.session_state.critical_constants = editor
