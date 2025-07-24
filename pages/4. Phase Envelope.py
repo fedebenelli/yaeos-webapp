@@ -9,12 +9,12 @@ from io import BytesIO
 def p_wilson(z, T, Tc, Pc, w):
     print(z)
     print(Pc)
-    P = 1.0/np.sum(z * Pc * np.exp(5.373 * (1 + w)*(1 - Tc/T)))
+    P = np.sum(z * Pc * np.exp(5.373 * (1 + w)*(1 - Tc/T)))
     return P
 
 if "critical_constants" in st.session_state:
     if len(st.session_state.critical_constants) > 1:
-        dew, bub = None, None
+        dew, bub, liq = None, None, None
         model_setter = st.session_state.model_setter
         model_params = st.session_state.critical_constants
 
@@ -68,12 +68,15 @@ if "critical_constants" in st.session_state:
                 )
 
                 dew = model.phase_envelope_pt(
-                    z, kind="dew", t0=400, p0=1
+                    z, kind="dew", t0=200, p0=1
                 )
 
-                p0 = max([max(bub["P"]), max(dew["P"])]) * 10
+                print(bub)
+                print(dew)
 
-                t0 = max([max(bub["T"]), max(dew["T"])]) + 100
+                p0 = 1000
+
+                t0 = 600
 
                 liq = model.phase_envelope_pt(z, kind="liquid-liquid", t0=t0, p0=p0)
 
