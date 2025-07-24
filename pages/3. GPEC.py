@@ -4,6 +4,7 @@ import plotly.graph_objects as go
 import numpy as np
 import pandas as pd
 from io import BytesIO
+import yaeos
 
 
 def get_fig(psats, critical_lines, x_col, y_col):
@@ -20,12 +21,13 @@ def get_fig(psats, critical_lines, x_col, y_col):
             )
 
     for critical_line in critical_lines:
-        fig.add_scatter(
-            x=critical_line[x_col],
-            y=critical_line[y_col],
-            mode="lines",
-            name="Critical Line",
-        )
+        if critical_line:
+            fig.add_scatter(
+                x=critical_line[x_col],
+                y=critical_line[y_col],
+                mode="lines",
+                name="Critical Line",
+            )
 
     return fig
 
@@ -40,28 +42,16 @@ if "critical_constants" in st.session_state:
 
         model = st.session_state.model
 
-        a0 = 1 - 1e-3
+        gpec = yaeos.GPEC(model)
 
-        pure_psat_1 = model.pure_saturation_pressures(1)
-        pure_psat_2 = model.pure_saturation_pressures(2)
+        pure_psat_1, pure_psat_2 = gpec._pures
+        critical_line_21 = gpec._cl21
+        critical_line_12 = gpec._cl12
+        critical_line_hpll = gpec._cl_ll
 
-        critical_line_21 = model.critical_line(
-            z0=z0, zi=zi, a0=a0, s=a0, ds0=-1e-3, max_points=5000,
-        )
-
-        critical_line_12 = model.critical_line(
-            z0=z0, zi=zi, a0=1e-5, s=1e-5, ds0=1e-5, max_points=5000,
-        )
-
-        critical_line_hpll = model.critical_line(
-            z0=z0,
-            zi=zi,
-            a0=0.5,
-            s=np.log(2000),
-            ds0=-1e-2,
-            ns=4,
-            max_points=5000,
-        )
+        print(gpec._cep12)
+        print(gpec._cep21)
+        print(gpec._cep_ll)
 
         c1, c2 = st.columns(2)
 
@@ -103,6 +93,38 @@ if "critical_constants" in st.session_state:
             file_name=file_name,
             mime="application/vnd.ms-excel",
         )
+
+        c1, c2  = st.columns(2)
+        with c1:
+            st.subheader("Pxy Diagram")
+            temperature = st.number_input(
+                "Temperature [K]",
+                min_value=0.0,
+                value=300.0,
+                step=1.0,
+            )
+            pxys = gpec.calc_pxy(temperature)
+
+            fig = go.Figure()
+            for pxy in pxys:
+                if pxy:
+                    z1 = pxy["a"]
+                    w1 = pxy.reference_phase_compositions[:, 0]
+                    p = pxy["P"]
+
+                    fig.add_scatter(
+                        x=z1,
+                        y=p,
+                        mode="lines",
+                        name="Bubble Line",
+                    )
+                    fig.add_scatter(
+                        x=w1,
+                        y=p,
+                        mode="lines",
+                        name="Dew Line",
+                    )
+                    st.plotly_chart(fig, use_container_width=False)
     else:
         st.warning("Please select a model and its parameters first.")
 else:
