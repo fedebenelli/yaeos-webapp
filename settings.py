@@ -79,7 +79,7 @@ class ModelSettings:
                 columns=["name", "Tc [K]", "Pc [bar]", "w"],
             )
             st.session_state.critical_constants = st.session_state.critical_constants.set_index("name")
-
+            st.session_state.critical_constants = st.session_state.critical_constants.astype(float)
         editor = st.data_editor(
             st.session_state.critical_constants,
             num_rows="dynamic",
