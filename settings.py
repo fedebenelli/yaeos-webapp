@@ -6,6 +6,8 @@ import streamlit as st
 
 from constants import AR_MODELS, AR_MIXING_RULES, GE_MODELS, setup_nrtl
 
+import time
+
 from setters import (
     setup_qmr,
     setup_qmrtd,
@@ -193,6 +195,8 @@ class ModelSettings:
 
         st.session_state.nc = nc
         st.session_state.model = model
+
+        time.sleep(0.5)
 
 
 orchestra = ModelSettings()

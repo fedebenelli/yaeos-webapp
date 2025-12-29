@@ -12,6 +12,7 @@ def p_wilson(z, T, Tc, Pc, w):
     P = np.sum(z * Pc * np.exp(5.373 * (1 + w)*(1 - Tc/T)))
     return P
 
+
 if "critical_constants" in st.session_state:
     if len(st.session_state.critical_constants) > 1:
         dew, bub, liq = None, None, None
@@ -31,77 +32,79 @@ if "critical_constants" in st.session_state:
         z = np.ones(nc)
         z = z/sum(z)
 
-        c1, c2 = st.columns(2)
-        with c1:
+        # c1, c2 = st.columns(2)
+        # with c1:
 
-            c11, c12 = st.columns(2)
-            with c11:
-                st.subheader("Fluid composition (moles)")
-                editor = st.data_editor(z, use_container_width=False)
+        c11, c12 = st.columns(2)
+        with c11:
+            st.subheader("Fluid composition (moles)")
+            editor = st.data_editor(z, use_container_width=False)
 
-                z = np.array(editor/sum(editor))
-            with c12:
-                st.subheader("Mole Fractions")
-                st.dataframe(
-                    pd.DataFrame(
-                        {
-                            "Component": model_params.index,
-                            "Mole Fraction": z,
-                        }
-                    ),
-                    use_container_width=False,
-                )
+            z = np.array(editor/sum(editor))
+        with c12:
+            st.subheader("Mole Fractions")
+            st.dataframe(
+                pd.DataFrame(
+                    {
+                        "Component": model_params.index,
+                        "Mole Fraction": z,
+                    }
+                ),
+                use_container_width=False,
+            )
 
-            if st.button("Calculate Phase Envelope"):
-                dew = model.phase_envelope_pt(z, kind="dew", t0=t0, p0=1)
+        if st.button("Calculate Phase Envelope"):
+            dew = model.phase_envelope_pt(z, kind="dew", t0=t0, p0=1)
 
-                t0 = 500
-                while p0 > 1:
-                    p0 = p_wilson(z, t0, Tc, Pc, w)
-                    t0 -= 10
-                print(t0, p0)
-                sat = model.saturation_pressure(z, temperature=t0, p0=p0)
-                print(sat)
+            t0 = 500
+            while p0 > 1:
+                p0 = p_wilson(z, t0, Tc, Pc, w)
+                t0 -= 10
+            print(t0, p0)
+            sat = model.saturation_pressure(z, temperature=t0, p0=p0)
+            print(sat)
 
-                bub = model.phase_envelope_pt(
-                    z, kind="bubble", t0=t0, p0=p0
-                )
+            bub = model.phase_envelope_pt(
+                z, kind="bubble", t0=t0, p0=p0
+            )
 
-                dew = model.phase_envelope_pt(
-                    z, kind="dew", t0=200, p0=1
-                )
+            dew = model.phase_envelope_pt(
+                z, kind="dew", t0=200, p0=1
+            )
 
-                print(bub)
-                print(dew)
+            print(bub)
+            print(dew)
 
-                p0 = 1000
+            p0 = 1000
 
-                t0 = 600
+            t0 = 600
 
-                liq = model.phase_envelope_pt(z, kind="liquid-liquid", t0=t0, p0=p0)
+            liq = model.phase_envelope_pt(
+                z, kind="liquid-liquid", t0=t0, p0=p0
+            )
 
-        with c2:
-            fig = go.Figure()
-            for env in [dew, bub, liq]:
-                if env:
-                    fig.add_trace(
-                        go.Scatter(
-                            x=env["T"],
-                            y=env["P"],
-                            mode="lines",
-                            name="Phase Envelope",
-                        )
+        # with c2:
+        fig = go.Figure()
+        for env in [dew, bub, liq]:
+            if env:
+                fig.add_trace(
+                    go.Scatter(
+                        x=env["T"],
+                        y=env["P"],
+                        mode="lines",
+                        name="Phase Envelope",
                     )
-                    fig.add_scatter(
-                        x=env["Tc"],
-                        y=env["Pc"],
-                        mode="markers",
-                        name="CP",
-                    )
+                )
+                fig.add_scatter(
+                    x=env["Tc"],
+                    y=env["Pc"],
+                    mode="markers",
+                    name="CP",
+                )
 
-            fig.update_xaxes(title_text="Temperature [K]",)
-            fig.update_yaxes(title_text="Pressure [bar]",)
-            st.plotly_chart(fig, use_container_width=True, points=1000)
+        fig.update_xaxes(title_text="Temperature [K]",)
+        fig.update_yaxes(title_text="Pressure [bar]",)
+        st.plotly_chart(fig, use_container_width=True, points=1000)
 
     else:
         st.warning("Please select a model and its parameters first.")
