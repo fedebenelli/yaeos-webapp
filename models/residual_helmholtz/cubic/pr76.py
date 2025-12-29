@@ -73,6 +73,7 @@ n-Pentane\t469.7\t33.7\t0.252"""
                 f"Line {line_num}: Could not convert values to numbers - {str(e)}",
             )
 
+    @classmethod
     def get_eos_object(cls, config):
         tc = [component.tc for component in config.components]
         pc = [component.pc for component in config.components]

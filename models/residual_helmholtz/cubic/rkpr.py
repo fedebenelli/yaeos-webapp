@@ -118,6 +118,7 @@ Propane\t369.8\t42.5\t0.152\t0.276"""
                 f"Line {line_num}: Could not convert values to numbers - {str(e)}",
             )
 
+    @classmethod
     def get_eos_object(cls, config):
         """Create the yaeos RKPR object from config"""
         tc = [c.tc for c in config.components]

@@ -44,6 +44,7 @@ class SoaveRedlichKwong(CEOSModelStrategy):
     ) -> tuple[Optional[ComponentData], Optional[str]]:
         return PengRobinson76.parse_bulk_import_line(parts, line_num)
 
+    @classmethod
     def get_eos_object(cls, config):
         """Create the yaeos SoaveRedlichKwong object from config"""
         tc = [c.tc for c in config.components]
