@@ -84,6 +84,9 @@ n-Pentane\t469.7\t33.7\t0.252"""
             else None
         )
 
+        print(config.mixing_rule)
+        print(mixrule)
+
         return yaeos.PengRobinson76(
             critical_temperatures=tc,
             critical_pressures=pc,

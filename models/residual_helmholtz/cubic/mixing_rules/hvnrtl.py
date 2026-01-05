@@ -5,6 +5,7 @@ from models.residual_helmholtz.cubic.mixing_rules.core import (
     MixingRuleStrategy,
 )
 from ui_components import create_parameter_matrix
+import yaeos
 
 
 class HVNRTLMixingRule(MixingRuleStrategy):
@@ -14,11 +15,13 @@ class HVNRTLMixingRule(MixingRuleStrategy):
         self,
         alpha: np.ndarray,
         gji: np.ndarray,
+        gjiT: np.ndarray,
         use_kij: np.ndarray,
         kij: np.ndarray,
     ):
         self.alpha = alpha
         self.gji = gji
+        self.gjiT = gjiT
         self.use_kij = use_kij
         self.kij = kij
 
@@ -35,13 +38,13 @@ class HVNRTLMixingRule(MixingRuleStrategy):
 
     def get_mixrule_object(self):
         """Returns: yaeos.HVNRTL(alpha, gji, use_kij, kij)"""
-        return {
-            "type": "HVNRTL",
-            "alpha": self.alpha,
-            "gji": self.gji,
-            "use_kij": self.use_kij,
-            "kij": self.kij,
-        }
+        return yaeos.HVNRTL(
+            alpha=self.alpha,
+            gji=self.gji,
+            gjiT=self.gjiT,
+            use_kij=self.use_kij,
+            kij=self.kij,
+        )
 
     @classmethod
     def get_display_name(cls) -> str:
@@ -72,15 +75,25 @@ class HVNRTLMixingRule(MixingRuleStrategy):
         # gji parameters (non-symmetric)
         st.markdown("---")
         st.write("**Energy parameters (gji) [K]:**")
-        gji = create_parameter_matrix(
-            n_components=n_components,
-            component_names=component_names,
-            matrix_name="gji",
-            default_value=0.0,
-            symmetric=False,
-            key_prefix=f"{key_prefix}_gji",
-        )
-
+        t1, t2 = st.tabs(["gji Matrix", "gjiT Matrix"])
+        with t1:
+            gji = create_parameter_matrix(
+                n_components=n_components,
+                component_names=component_names,
+                matrix_name="gji",
+                default_value=0.0,
+                symmetric=False,
+                key_prefix=f"{key_prefix}_gji",
+            )
+        with t2:
+            gjiT = create_parameter_matrix(
+                n_components=n_components,
+                component_names=component_names,
+                matrix_name="gjiT",
+                default_value=0.0,
+                symmetric=False,
+                key_prefix=f"{key_prefix}_gjiT",
+            )
         # use_kij matrix (boolean)
         st.markdown("---")
         st.write("**Use kij flags (True/False):**")
@@ -112,4 +125,4 @@ class HVNRTLMixingRule(MixingRuleStrategy):
                         kij[i, j] = kij_val
                         kij[j, i] = kij_val
 
-        return cls(alpha=alpha, gji=gji, use_kij=use_kij, kij=kij)
+        return cls(alpha=alpha, gji=gji, gjiT=gjiT, use_kij=use_kij, kij=kij)

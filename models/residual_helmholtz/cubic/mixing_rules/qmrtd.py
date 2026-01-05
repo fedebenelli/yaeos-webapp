@@ -6,6 +6,8 @@ from models.residual_helmholtz.cubic.mixing_rules.core import (
 )
 from ui_components import create_parameter_matrix
 
+import yaeos
+
 
 class QMRTDMixingRule(MixingRuleStrategy):
     """Temperature-dependent quadratic mixing rule (QMRTD)"""
@@ -35,13 +37,12 @@ class QMRTDMixingRule(MixingRuleStrategy):
 
     def get_mixrule_object(self):
         """Returns: yaeos.QMRTD(kij_0, kij_inf, Tref, lij)"""
-        return {
-            "type": "QMRTD",
-            "kij_0": self.kij_0,
-            "kij_inf": self.kij_inf,
-            "Tref": self.Tref,
-            "lij": self.lij,
-        }
+        return yaeos.QMRTD(
+            kij_0=self.kij_0,
+            kij_inf=self.kij_inf,
+            Tref=self.Tref,
+            lij=self.lij,
+        )
 
     @classmethod
     def get_display_name(cls) -> str:
@@ -49,7 +50,8 @@ class QMRTDMixingRule(MixingRuleStrategy):
 
     @classmethod
     def get_description(cls) -> str:
-        return "kij varies with temperature: kij(T) = kij_0 + (kij_inf - kij_0) * T / Tref"
+        eq = r"$k_{ij}(T) = k_{ij}^{\infty} + k_{ij}^0 \exp \frac{T}{T_{ref}}$"
+        return eq
 
     @classmethod
     def setup_ui(

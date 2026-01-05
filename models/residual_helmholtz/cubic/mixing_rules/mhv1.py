@@ -5,6 +5,8 @@ from models.residual_helmholtz.cubic.mixing_rules.core import (
 )
 from models.excess_gibbs import GEModelStrategy, GE_MODEL_REGISTRY
 
+import yaeos
+
 
 class MHVMixingRule(MixingRuleStrategy):
     """Modified Huron-Vidal (MHV1) mixing rule with GE model"""
@@ -25,11 +27,10 @@ class MHVMixingRule(MixingRuleStrategy):
 
     def get_mixrule_object(self):
         """Returns: yaeos.MHV(ge=ge_model, q=q)"""
-        return {
-            "type": "MHV",
-            "ge": self.ge_model.get_ge_object(),
-            "q": self.q,
-        }
+        return yaeos.MHV(
+            ge=self.ge_model.get_ge_object(),
+            q=self.q,
+        )
 
     @classmethod
     def get_display_name(cls) -> str:

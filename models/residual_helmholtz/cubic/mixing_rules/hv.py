@@ -4,6 +4,7 @@ from models.residual_helmholtz.cubic.mixing_rules.core import (
     MixingRuleStrategy,
 )
 from models.excess_gibbs import GE_MODEL_REGISTRY
+import yaeos
 
 
 class HVMixingRule(MixingRuleStrategy):
@@ -23,7 +24,7 @@ class HVMixingRule(MixingRuleStrategy):
 
     def get_mixrule_object(self):
         """Returns: yaeos.HV(ge=ge_model)"""
-        return {"type": "HV", "ge": self.ge_model.get_ge_object()}
+        return yaeos.HV(ge=self.ge_model.get_ge_object())
 
     @classmethod
     def get_display_name(cls) -> str:

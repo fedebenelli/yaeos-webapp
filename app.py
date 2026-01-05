@@ -87,9 +87,10 @@ class EOSModelConfig:
 # ==============================================================================
 def main():
     st.set_page_config(
-        page_title="YAEOS Web App", layout="wide", page_icon="🧪"
+        page_title="YAEOS Web App", 
+        layout="wide", 
+        page_icon="🧪", initial_sidebar_state="expanded"
     )
-
     # Initialize session state
     if "model_config" not in st.session_state:
         st.session_state.model_config = EOSModelConfig()
