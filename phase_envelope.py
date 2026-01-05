@@ -19,9 +19,9 @@ def show_phase_envelope():
             "⚠️ Please configure and create a model first in the 'Model Configuration' page"
         )
         return
-    
+
     config = st.session_state.model_config
-    
+
     if not config.is_ar_model():
         st.error(
             "❌ Phase envelope calculations require an **ArModel (Residual Helmholtz)**"

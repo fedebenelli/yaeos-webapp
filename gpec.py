@@ -21,7 +21,7 @@ def show_gpec_diagram():
         return
 
     config = st.session_state.model_config
-    
+
     if not config.is_ar_model():
         st.error(
             "❌ GPEC diagrams require an **ArModel (Residual Helmholtz)**"
@@ -56,7 +56,7 @@ def show_gpec_diagram():
     )
 
     model = st.session_state.model
-    
+
     try:
         gpec = yaeos.GPEC(model, max_pressure=300)
     except Exception as e:
@@ -78,7 +78,7 @@ def show_gpec_diagram():
 
     st.header("Global Phase Diagram")
     fig = go.Figure()
-    
+
     for i, pure in enumerate(gpec._pures):
         fig.add_trace(
             go.Scatter(
@@ -89,7 +89,7 @@ def show_gpec_diagram():
                 line=dict(width=2, dash="dot"),
             )
         )
-    
+
     fig.add_trace(
         go.Scatter(
             x=gpec._cl21["T"],
@@ -110,7 +110,7 @@ def show_gpec_diagram():
                 line=dict(color="gray", width=2),
             )
         )
-    
+
     if gpec._cl_ll is not None:
         fig.add_trace(
             go.Scatter(
@@ -360,4 +360,3 @@ def show_gpec_diagram():
                     )
 
                     st.dataframe(df_critical, use_container_width=True)
-

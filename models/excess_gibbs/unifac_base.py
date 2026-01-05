@@ -1,6 +1,41 @@
 from typing import Any, Dict, List, Optional
 import streamlit as st
 from models.excess_gibbs.core import GEModelStrategy
+from thermo_utils import ComponentData
+
+
+def ugropy_helper(cls, name: str, key_prefix: str, i: int):
+    molecule_name = name
+
+    if molecule_name and st.button(
+        "Search", key=f"{key_prefix}_ugropy_btn_{i}"
+    ):
+        try:
+            import ugropy
+
+            ug_c1, ug_c2 = st.columns(2)
+            model_module = cls._get_ugropy_module()
+            groups = model_module.get_groups(molecule_name)
+            with ug_c1:
+                st.success(f"Found groups for {molecule_name}:")
+                st.json(groups.subgroups_num)
+                groups_str = ",".join(
+                    [
+                        f"{gid}:{cnt}"
+                        for gid, cnt in groups.subgroups_num.items()
+                    ]
+                )
+                st.code("Copy and paste below:\n" + groups_str, language=None)
+            with ug_c2:
+                st.info("Molecule Structure:")
+                svg_string = groups.draw().data
+                st.image(svg_string, caption="Local SVG", width=300)
+        except ImportError:
+            st.error("ugropy not installed. Run: pip install ugropy")
+        except Exception as e:
+            st.warning(f"Could not find groups: {str(e)}")
+        return groups, groups_str
+    return None, None
 
 
 class UNIFACBaseModel(GEModelStrategy):
@@ -25,51 +60,13 @@ class UNIFACBaseModel(GEModelStrategy):
             st.markdown(f"**Component {i+1}: {name}**")
 
             with st.expander(f"🔍 Get groups using ugropy for {name}"):
-                molecule_name = st.text_input(
-                    "Search molecule",
-                    value=name,
-                    key=f"{key_prefix}_ugropy_search_{i}",
-                    placeholder=f"e.g., {name}",
+                groups_str, groups_str = ugropy_helper(
+                    cls, name, key_prefix, i
                 )
-
-                if molecule_name and st.button(
-                    "Search", key=f"{key_prefix}_ugropy_btn_{i}"
-                ):
-                    try:
-                        import ugropy
-
-                        ug_c1, ug_c2 = st.columns(2)
-                        model_module = cls._get_ugropy_module()
-                        groups = model_module.get_groups(molecule_name)
-                        with ug_c1:
-                            st.success(f"Found groups for {molecule_name}:")
-                            st.json(groups.subgroups_num)
-                            st.code(
-                                "Copy and paste below:\n"
-                                + ",".join(
-                                    [
-                                        f"{gid}:{cnt}"
-                                        for gid, cnt in groups.subgroups_num.items()
-                                    ]
-                                ),
-                                language=None,
-                            )
-                        with ug_c2:
-                            st.info("Molecule Structure:")
-                            svg_string = groups.draw().data
-                            st.image(
-                                svg_string, caption="Local SVG", width=300
-                            )
-                    except ImportError:
-                        st.error(
-                            "ugropy not installed. Run: pip install ugropy"
-                        )
-                    except Exception as e:
-                        st.warning(f"Could not find groups: {str(e)}")
 
             groups_str = st.text_input(
                 f"Groups for {name}",
-                value="",
+                value=groups_str if groups_str else "",
                 placeholder="e.g., 1:2, 2:1, 14:1",
                 help="Format: group_id:count, group_id:count",
                 key=f"{key_prefix}_groups_{i}",
@@ -100,6 +97,21 @@ class UNIFACBaseModel(GEModelStrategy):
             st.error("❌ Please specify functional groups for all components")
 
         return cls(molecules=molecules)
+
+    @classmethod
+    def setup_component_ui(cls, key_prefix: str = "comp") -> ComponentData:
+        """
+        Default component setup for GeModels.
+        Most GeModels (NRTL, UNIQUAC) only need basic properties (Tc, Pc, w).
+        Models requiring groups (UNIFAC, PSRK) should override this method.
+        """
+        # Default behavior: Use the standard input function
+        name = st.text_input(f"{key_prefix}_name", "Component Name")
+        tc, pc, w = None, None, None
+        # groups, _ = ugropy_helper(cls, name, key_prefix, 0)
+
+        # Return standard component data
+        return ComponentData(name=name, tc=tc, pc=pc, w=w)
 
     @classmethod
     def _get_ugropy_module(cls):

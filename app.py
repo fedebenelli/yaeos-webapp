@@ -38,8 +38,12 @@ class EOSModelConfig:
 
     def __init__(self):
         self.components: List[ComponentData] = []
-        self.model_category: str = ModelType.RESIDUAL_HELMHOLTZ  # ArModel or GeModel
-        self.model_type: str = "PengRobinson76"  # Specific model within category
+        self.model_category: str = (
+            ModelType.RESIDUAL_HELMHOLTZ
+        )  # ArModel or GeModel
+        self.model_type: str = (
+            "PengRobinson76"  # Specific model within category
+        )
         self.mixing_rule: Optional[MixingRuleStrategy] = None
 
     def add_component(self, component: ComponentData):
@@ -66,7 +70,7 @@ class EOSModelConfig:
                 for c in self.components
             ],
         }
-        
+
         if self.is_ar_model():
             config_dict["mixing_rule"] = (
                 self.mixing_rule.get_name() if self.mixing_rule else None
@@ -74,7 +78,7 @@ class EOSModelConfig:
             config_dict["mixing_params"] = (
                 self.mixing_rule.get_params() if self.mixing_rule else None
             )
-        
+
         return config_dict
 
 
@@ -98,7 +102,13 @@ def main():
 
     page = st.sidebar.radio(
         "Navigation",
-        ["Home", "Model Configuration", "Phase Envelope", "GPEC Diagram"],
+        [
+            "Home",
+            "Model Configuration",
+            "Phase Envelope",
+            "GPEC Diagram",
+            "FlashT (Ge Model)",
+        ],
     )
 
     if page == "Home":
@@ -109,6 +119,11 @@ def main():
         show_phase_envelope()
     elif page == "GPEC Diagram":
         show_gpec_diagram()
+    if page == "FlashT (Ge Model)":
+        from flash_ge import show_flash_ge_page
+
+        show_flash_ge_page()
+
 
 if __name__ == "__main__":
     main()

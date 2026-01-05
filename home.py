@@ -23,7 +23,7 @@ def show_home_page():
         )
 
         st.header("Available Model Types")
-        
+
         st.subheader("🔷 ArModel (Residual Helmholtz)")
         st.markdown(
             """
@@ -39,7 +39,7 @@ def show_home_page():
         - Temperature-dependent variants
         """
         )
-        
+
         st.subheader("🔶 GeModel (Excess Gibbs)")
         st.markdown(
             """
@@ -102,5 +102,3 @@ def show_home_page():
         **Requires:** ArModel (Residual Helmholtz)
         """
         )
-
-

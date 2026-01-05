@@ -3,6 +3,7 @@ from typing import Any, Dict, List
 import numpy as np
 import streamlit as st
 from ui_components import create_nrtl_matrices, create_parameter_matrix
+from thermo_utils import ComponentData
 
 
 class GEModelStrategy(ABC):
@@ -42,6 +43,15 @@ class GEModelStrategy(ABC):
         -------
         GEModelStrategy
             Configured GE model instance
+        """
+        pass
+
+    @classmethod
+    def setup_component_ui(cls, key_prefix: str = "comp") -> ComponentData:
+        """
+        Default component setup for GeModels.
+        Most GeModels (NRTL, UNIQUAC) only need basic properties (Tc, Pc, w).
+        Models requiring groups (UNIFAC, PSRK) should override this method.
         """
         pass
 

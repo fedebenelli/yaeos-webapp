@@ -24,15 +24,17 @@ def show_model_configuration():
     model_category = st.radio(
         "Model Category",
         [ModelType.RESIDUAL_HELMHOLTZ, ModelType.EXCESS_GIBBS],
-        help="ArModel (Residual Helmholtz) for EoS calculations, GeModel (Excess Gibbs) for activity coefficients"
+        help="ArModel (Residual Helmholtz) for EoS calculations, GeModel (Excess Gibbs) for activity coefficients",
     )
 
     # Update config if category changed
     if config.model_category != model_category:
         config.model_category = model_category
-        config.mixing_rule = None  # Reset mixing rule when switching categories
+        config.mixing_rule = (
+            None  # Reset mixing rule when switching categories
+        )
         st.session_state.model_created = False  # Invalidate existing model
-    
+
     st.markdown("---")
 
     # =========================================================================
@@ -43,31 +45,33 @@ def show_model_configuration():
     if config.is_ar_model():
         # ArModel (Cubic EoS) Selection
         model_options = {
-            key: cls.get_display_name() for key, cls in CUBIC_EOS_REGISTRY.items()
+            key: cls.get_display_name()
+            for key, cls in CUBIC_EOS_REGISTRY.items()
         }
-        
+
         config.model_type = st.selectbox(
             "Cubic EoS Model",
             list(model_options.keys()),
             format_func=lambda x: model_options[x],
-            help="Select the cubic equation of state model"
+            help="Select the cubic equation of state model",
         )
-        
+
         ModelClass = CUBIC_EOS_REGISTRY[config.model_type]
-        
+
     else:  # GeModel
         # GeModel Selection
         model_options = {
-            key: cls.get_display_name() for key, cls in GE_MODEL_REGISTRY.items()
+            key: cls.get_display_name()
+            for key, cls in GE_MODEL_REGISTRY.items()
         }
-        
+
         config.model_type = st.selectbox(
             "Excess Gibbs Model",
             list(model_options.keys()),
             format_func=lambda x: model_options[x],
-            help="Select the excess Gibbs energy model"
+            help="Select the excess Gibbs energy model",
         )
-        
+
         ModelClass = GE_MODEL_REGISTRY[config.model_type]
 
     # Display model description
@@ -129,9 +133,7 @@ def show_model_configuration():
         new_comp = ModelClass.setup_component_ui(key_prefix="add_comp")
     else:
         # For GeModel, only basic properties needed (some models may need groups)
-        from ui_components import input_basic_component_properties
-        name, tc, pc, w = input_basic_component_properties(key_prefix="add_comp")
-        new_comp = ComponentData(name=name, tc=tc, pc=pc, w=w)
+        new_comp = ModelClass.setup_component_ui(key_prefix="add_comp")
 
     if st.button("Add Component", type="primary"):
         config.add_component(new_comp)
@@ -218,7 +220,9 @@ def show_model_configuration():
                                 continue
 
                             try:
-                                parts = [p.strip() for p in line.split(delimiter)]
+                                parts = [
+                                    p.strip() for p in line.split(delimiter)
+                                ]
                                 component, error = (
                                     ModelClass.parse_bulk_import_line(parts, i)
                                 )
@@ -298,16 +302,16 @@ def show_model_configuration():
             )
 
             config.set_mixing_rule(mixrule_instance)
-    
+
     else:  # GeModel
         # GeModel: Direct Parameter Configuration
         st.header("4. Configure Model Parameters")
-        
+
         if n_components < 2:
             st.warning("⚠️ Add at least 2 components to configure parameters")
         else:
             component_names = [comp.name for comp in config.components]
-            
+
             # The GeModel setup_ui returns a configured instance
             st.session_state.ge_model_instance = ModelClass.setup_ui(
                 n_components=n_components,
@@ -329,23 +333,27 @@ def show_model_configuration():
 
     with col2:
         can_create = n_components >= 2
-        
+
         if st.button(
             "✅ Create Model", type="primary", disabled=(not can_create)
         ):
             try:
                 if config.is_ar_model():
                     # Create ArModel
-                    st.session_state.model = ModelClass.get_eos_object(config=config)
+                    st.session_state.model = ModelClass.get_eos_object(
+                        config=config
+                    )
                 else:
                     # Create GeModel
-                    st.session_state.model = st.session_state.ge_model_instance.get_ge_object()
-                
+                    st.session_state.model = (
+                        st.session_state.ge_model_instance.get_ge_object()
+                    )
+
                 st.session_state.model_created = True
                 st.session_state.model_category = config.model_category
                 st.success("Model created successfully!")
                 st.balloons()
-                
+
             except Exception as e:
                 st.error(f"Error creating model: {str(e)}")
 
@@ -355,4 +363,3 @@ def show_model_configuration():
         if st.session_state.model_created:
             category = "ArModel" if config.is_ar_model() else "GeModel"
             st.success(f"✓ {category} is ready for calculations")
-
