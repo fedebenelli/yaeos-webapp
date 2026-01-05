@@ -34,16 +34,13 @@ class HVMixingRule(MixingRuleStrategy):
         return "Huron-Vidal mixing rule with excess Gibbs energy model"
 
     @classmethod
-    def setup_ui(
-        cls, n_components: int, component_names: List[str], key_prefix: str
-    ):
+    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
         st.subheader("HV - Mixing Rule with Excess Gibbs Model")
         st.markdown(cls.get_description())
 
         # Select GE model from registry
         ge_model_options = {
-            key: ge_cls.get_display_name()
-            for key, ge_cls in GE_MODEL_REGISTRY.items()
+            key: ge_cls.get_display_name() for key, ge_cls in GE_MODEL_REGISTRY.items()
         }
 
         ge_model_type = st.selectbox(

@@ -5,6 +5,7 @@ from typing import List, Dict, Any, Optional
 from models.excess_gibbs import GEModelStrategy
 from ui_components import create_parameter_matrix, display_matrix_info
 
+
 class UNIQUACStrategy(GEModelStrategy):
     """
     Strategy for the UNIQUAC Excess Gibbs Energy model.
@@ -42,7 +43,8 @@ class UNIQUACStrategy(GEModelStrategy):
         return {
             "Name": (
                 "Universal Quasi-Chemical model with full interaction "
-                "parameter support (aij...eij)."),
+                "parameter support (aij...eij)."
+            ),
             "$q$": "Surface area parameters for each component.",
             "$r$": "Volume parameters for each component.",
             "$a_{ij}$": "Matrix of interaction parameters aij.",
@@ -55,7 +57,7 @@ class UNIQUACStrategy(GEModelStrategy):
             r"$\phi_k$": r"$\frac{r_k n_k}{\sum_l r_l n_l}$",
             r"$\theta_k$": r"$\frac{q_k n_k}{\sum_l q_l n_l}$",
             r"$\tau_{lk}$": r"$\exp\left[\frac{-\Delta U_{lk}}{RT} \right]$",
-            r"$-\frac{\Delta U_{lk}}{RT}$": r"$a_{lk}+\frac{b_{lk}}{T}+c_{lk}\ln T + d_{lk}T + e_{lk}{T^2}$"
+            r"$-\frac{\Delta U_{lk}}{RT}$": r"$a_{lk}+\frac{b_{lk}}{T}+c_{lk}\ln T + d_{lk}T + e_{lk}{T^2}$",
         }
 
     def get_params(self) -> Dict[str, Any]:
@@ -102,7 +104,7 @@ class UNIQUACStrategy(GEModelStrategy):
         # 1. Structural Parameters (qs, rs)
         st.write("###### Structural Parameters")
         col1, col2 = st.columns(2)
-        
+
         rs = []
         qs = []
 
@@ -110,10 +112,7 @@ class UNIQUACStrategy(GEModelStrategy):
             st.write("$r_i$ (Volume Parameter)")
             for i, name in enumerate(component_names):
                 val = st.number_input(
-                    f"r for {name}", 
-                    value=1.0, 
-                    step=0.1, 
-                    key=f"{key_prefix}_r_{i}"
+                    f"r for {name}", value=1.0, step=0.1, key=f"{key_prefix}_r_{i}"
                 )
                 rs.append(val)
 
@@ -121,10 +120,7 @@ class UNIQUACStrategy(GEModelStrategy):
             st.write("$q_i$ (Surface Area Parameter)")
             for i, name in enumerate(component_names):
                 val = st.number_input(
-                    f"q for {name}", 
-                    value=1.0, 
-                    step=0.1, 
-                    key=f"{key_prefix}_q_{i}"
+                    f"q for {name}", value=1.0, step=0.1, key=f"{key_prefix}_q_{i}"
                 )
                 qs.append(val)
 
@@ -133,7 +129,9 @@ class UNIQUACStrategy(GEModelStrategy):
 
         # 2. Interaction Parameters (Matrices)
         st.write("###### Interaction Parameters")
-        st.info(r"Parameters correspond to the expansion: $\frac{-\Delta U_{ij}}{RT} = a_{ij} + b_{ij}/T + c_{ij} \ln(T) + d_{ij} T + e_{ij}/T^2$")
+        st.info(
+            r"Parameters correspond to the expansion: $\frac{-\Delta U_{ij}}{RT} = a_{ij} + b_{ij}/T + c_{ij} \ln(T) + d_{ij} T + e_{ij}/T^2$"
+        )
 
         tabs = st.tabs(["aij", "bij", "cij", "dij", "eij"])
 
@@ -144,8 +142,10 @@ class UNIQUACStrategy(GEModelStrategy):
                 # unless it's 'aij' or 'bij' which are common.
                 use_matrix = True
                 if name not in ["aij", "bij"]:
-                    use_matrix = st.checkbox(f"Include {name} parameters?", key=f"{key_prefix}_use_{name}")
-                
+                    use_matrix = st.checkbox(
+                        f"Include {name} parameters?", key=f"{key_prefix}_use_{name}"
+                    )
+
                 if use_matrix:
                     display_matrix_info(name, symmetric=False)
                     return create_parameter_matrix(
@@ -171,5 +171,5 @@ class UNIQUACStrategy(GEModelStrategy):
             bij=bij_mat,
             cij=cij_mat,
             dij=dij_mat,
-            eij=eij_mat
+            eij=eij_mat,
         )

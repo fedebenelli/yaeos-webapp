@@ -52,9 +52,7 @@ class HVNRTLMixingRule(MixingRuleStrategy):
         return "Special implementation combining HV and NRTL with selective kij usage"
 
     @classmethod
-    def setup_ui(
-        cls, n_components: int, component_names: List[str], key_prefix: str
-    ):
+    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
         st.subheader("HVNRTL - Huron-Vidal with NRTL")
         st.markdown(cls.get_description())
 

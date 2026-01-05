@@ -23,9 +23,7 @@ class GEModelStrategy(ABC):
 
     @classmethod
     @abstractmethod
-    def setup_ui(
-        cls, n_components: int, component_names: List[str], key_prefix: str
-    ):
+    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
         """
         Display UI for parameter configuration and return instantiated GE model.
 

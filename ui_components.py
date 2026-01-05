@@ -235,16 +235,11 @@ def paste_matrix_from_excel(
                 language=None,
             )
         else:
-            example_matrix = np.full(
-                (min(n_components, 3), min(n_components, 3)), 0.05
-            )
+            example_matrix = np.full((min(n_components, 3), min(n_components, 3)), 0.05)
             np.fill_diagonal(example_matrix, 0.0)
             st.code(
                 "\n".join(
-                    [
-                        "\t".join([f"{val:.2f}" for val in row])
-                        for row in example_matrix
-                    ]
+                    ["\t".join([f"{val:.2f}" for val in row]) for row in example_matrix]
                 ),
                 language=None,
             )
@@ -309,9 +304,7 @@ def paste_matrix_from_excel(
                         )
                     else:
                         # Parse full matrix format
-                        matrix = parse_full_matrix(
-                            lines, n_components, delimiter
-                        )
+                        matrix = parse_full_matrix(lines, n_components, delimiter)
 
                     # Validate matrix
                     if matrix.shape != (n_components, n_components):
@@ -330,15 +323,11 @@ def paste_matrix_from_excel(
                     # Store in session state
                     st.session_state[session_key] = matrix
 
-                    st.success(
-                        f"✅ Successfully imported {matrix_name} matrix!"
-                    )
+                    st.success(f"✅ Successfully imported {matrix_name} matrix!")
 
                 except Exception as e:
                     st.error(f"❌ Error parsing matrix: {str(e)}")
-                    st.info(
-                        "Please check your data format and delimiter selection."
-                    )
+                    st.info("Please check your data format and delimiter selection.")
             else:
                 st.warning("Please paste matrix data first!")
 
@@ -477,9 +466,7 @@ def display_matrix_table(matrix: np.ndarray, component_names: List[str]):
 
     # Format to 4 decimal places
     st.dataframe(
-        df.style.format("{:.4f}").background_gradient(
-            cmap="RdYlGn_r", axis=None
-        ),
+        df.style.format("{:.4f}").background_gradient(cmap="RdYlGn_r", axis=None),
         use_container_width=True,
     )
 
@@ -542,12 +529,8 @@ def create_nrtl_matrices(
             a21 = st.number_input("a21", value=0.0, key=f"{key_prefix}_a21")
 
         with col2:
-            b12 = st.number_input(
-                "b12 [K]", value=0.0, key=f"{key_prefix}_b12"
-            )
-            b21 = st.number_input(
-                "b21 [K]", value=0.0, key=f"{key_prefix}_b21"
-            )
+            b12 = st.number_input("b12 [K]", value=0.0, key=f"{key_prefix}_b12")
+            b21 = st.number_input("b21 [K]", value=0.0, key=f"{key_prefix}_b21")
 
         with col3:
             alpha = st.number_input(

@@ -79,9 +79,7 @@ n-Pentane\t469.7\t33.7\t0.252"""
         pc = [component.pc for component in config.components]
         w = [component.w for component in config.components]
         mixrule = (
-            config.mixing_rule.get_mixrule_object()
-            if config.mixing_rule
-            else None
+            config.mixing_rule.get_mixrule_object() if config.mixing_rule else None
         )
 
         return yaeos.PengRobinson76(

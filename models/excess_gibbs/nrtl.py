@@ -43,9 +43,7 @@ class NRTLModel(GEModelStrategy):
         """
 
     @classmethod
-    def setup_ui(
-        cls, n_components: int, component_names: List[str], key_prefix: str
-    ):
+    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
         st.write(f"**{cls.get_display_name()} Parameters**")
         st.info(cls.get_description())
 

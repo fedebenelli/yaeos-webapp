@@ -18,9 +18,7 @@ class PSRK(CEOSModelStrategy):
 
     @classmethod
     def get_description(cls) -> str:
-        return (
-            "Predictive Soave-Redlich-Kwong with built-in UNIFAC mixing rules"
-        )
+        return "Predictive Soave-Redlich-Kwong with built-in UNIFAC mixing rules"
 
     @classmethod
     def get_required_parameters(cls) -> List[str]:
@@ -105,9 +103,7 @@ class PSRK(CEOSModelStrategy):
                     group_id, count = pair.strip().split(":")
                     groups[int(group_id)] = int(count)
             except:
-                st.warning(
-                    "Invalid groups format. Use: group_id:count, group_id:count"
-                )
+                st.warning("Invalid groups format. Use: group_id:count, group_id:count")
                 groups = None
 
         return ComponentData(
@@ -190,7 +186,7 @@ n-Decane\t617.7\t21.1\t0.492328\t1.2407\t-0.34943\t0.7327\t1:2,2:8"""
         """Create the yaeos PSRK object from config"""
         tc = np.array([c.tc for c in config.components])
         pc = np.array([c.pc for c in config.components])
-        w =  np.array([c.w for c in config.components])
+        w = np.array([c.w for c in config.components])
 
         # PSRK specific parameters
         c1 = np.array([c.c1 for c in config.components])

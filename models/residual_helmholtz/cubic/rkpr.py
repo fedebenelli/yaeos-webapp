@@ -14,9 +14,7 @@ class RKPR(CEOSModelStrategy):
 
     @classmethod
     def get_description(cls) -> str:
-        return (
-            "Redlich-Kwong-Peng-Robinson with additional flexibility parameter"
-        )
+        return "Redlich-Kwong-Peng-Robinson with additional flexibility parameter"
 
     @classmethod
     def get_required_parameters(cls) -> List[str]:
@@ -129,9 +127,7 @@ Propane\t369.8\t42.5\t0.152\t0.276"""
         zc = [c.zc for c in config.components]
 
         mixrule = (
-            config.mixing_rule.get_mixrule_object()
-            if config.mixing_rule
-            else None
+            config.mixing_rule.get_mixrule_object() if config.mixing_rule else None
         )
 
         return yaeos.RKPR(
