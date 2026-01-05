@@ -13,7 +13,9 @@ class UNIFACBaseModel(GEModelStrategy):
         return {"molecules": self.molecules}
 
     @classmethod
-    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
+    def setup_ui(
+        cls, n_components: int, component_names: List[str], key_prefix: str
+    ):
         st.write(f"**{cls.get_display_name()} Parameters**")
         st.info(cls.get_description())
 
@@ -55,9 +57,13 @@ class UNIFACBaseModel(GEModelStrategy):
                         with ug_c2:
                             st.info("Molecule Structure:")
                             svg_string = groups.draw().data
-                            st.image(svg_string, caption="Local SVG", width=300)
+                            st.image(
+                                svg_string, caption="Local SVG", width=300
+                            )
                     except ImportError:
-                        st.error("ugropy not installed. Run: pip install ugropy")
+                        st.error(
+                            "ugropy not installed. Run: pip install ugropy"
+                        )
                     except Exception as e:
                         st.warning(f"Could not find groups: {str(e)}")
 

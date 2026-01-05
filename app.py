@@ -66,7 +66,9 @@ class EOSModelConfig:
                 {"name": c.name, "tc": c.tc, "pc": c.pc, "w": c.w}
                 for c in self.components
             ],
-            "mixing_rule": (self.mixing_rule.get_name() if self.mixing_rule else None),
+            "mixing_rule": (
+                self.mixing_rule.get_name() if self.mixing_rule else None
+            ),
             "mixing_params": (
                 self.mixing_rule.get_params() if self.mixing_rule else None
             ),
@@ -81,7 +83,9 @@ class EOSModelConfig:
 # Streamlit App Pages
 # ==============================================================================
 def main():
-    st.set_page_config(page_title="YAEOS Web App", layout="wide", page_icon="🧪")
+    st.set_page_config(
+        page_title="YAEOS Web App", layout="wide", page_icon="🧪"
+    )
 
     # Initialize session state
     if "model_config" not in st.session_state:
@@ -202,7 +206,9 @@ def show_home_page():
 def show_model_configuration():
     """Model configuration page"""
     st.title("Model Configuration")
-    st.markdown("Configure your thermodynamic model, components, and mixing rules")
+    st.markdown(
+        "Configure your thermodynamic model, components, and mixing rules"
+    )
     st.markdown("---")
 
     config = st.session_state.model_config
@@ -232,7 +238,9 @@ def show_model_configuration():
     required_params = ModelClass.get_required_parameters()
     if required_params:
         param_names = ", ".join(required_params)
-        st.warning(f"⚠️ This model requires additional parameters: {param_names}")
+        st.warning(
+            f"⚠️ This model requires additional parameters: {param_names}"
+        )
 
     st.markdown("---")
 
@@ -245,14 +253,16 @@ def show_model_configuration():
         st.subheader("Current Components")
         if config.components:
             for i, comp in enumerate(config.components):
-                comp_info = (
-                    f"{i+1}. {comp.name}: Tc={comp.tc}K, Pc={comp.pc}bar, ω={comp.w}"
-                )
+                comp_info = f"{i+1}. {comp.name}: Tc={comp.tc}K, Pc={comp.pc}bar, ω={comp.w}"
 
                 # Add model-specific parameters if present
                 if comp.zc is not None:
                     comp_info += f", Zc={comp.zc}"
-                if comp.c1 is not None or comp.c2 is not None or comp.c3 is not None:
+                if (
+                    comp.c1 is not None
+                    or comp.c2 is not None
+                    or comp.c3 is not None
+                ):
                     comp_info += f", c=[{comp.c1}, {comp.c2}, {comp.c3}]"
                 if comp.groups:
                     groups_str = ",".join(
@@ -300,9 +310,13 @@ def show_model_configuration():
             key="common_comp_select",
         )
 
-        if selected_common and st.button("Add from Database", key="add_from_db"):
+        if selected_common and st.button(
+            "Add from Database", key="add_from_db"
+        ):
             tc_db, pc_db, w_db = common_components[selected_common]
-            new_comp = ComponentData(name=selected_common, tc=tc_db, pc=pc_db, w=w_db)
+            new_comp = ComponentData(
+                name=selected_common, tc=tc_db, pc=pc_db, w=w_db
+            )
             config.add_component(new_comp)
             st.success(f"Added {selected_common} from database")
             st.rerun()
@@ -352,15 +366,17 @@ def show_model_configuration():
                     imported_count = 0
                     errors = []
 
-                    for i, line in enumerate(lines[start_idx:], start=start_idx + 1):
+                    for i, line in enumerate(
+                        lines[start_idx:], start=start_idx + 1
+                    ):
                         if not line.strip():
                             continue
 
                         try:
                             # Split by delimiter
                             parts = [p.strip() for p in line.split(delimiter)]
-                            component, error = ModelClass.parse_bulk_import_line(
-                                parts, i
+                            component, error = (
+                                ModelClass.parse_bulk_import_line(parts, i)
                             )
 
                             # Add component
@@ -387,7 +403,9 @@ def show_model_configuration():
                             st.text(error)
 
                     if imported_count == 0 and not errors:
-                        st.error("No valid data found. Please check your format.")
+                        st.error(
+                            "No valid data found. Please check your format."
+                        )
 
                 except Exception as e:
                     st.error(f"Error parsing data: {str(e)}")
@@ -424,7 +442,8 @@ def show_model_configuration():
     else:
         # Build mixing rule options from registry
         mixing_rule_options = {
-            key: cls.get_display_name() for key, cls in MIXING_RULE_REGISTRY.items()
+            key: cls.get_display_name()
+            for key, cls in MIXING_RULE_REGISTRY.items()
         }
 
         mixing_rule_type = st.selectbox(
@@ -459,7 +478,9 @@ def show_model_configuration():
         st.json(config.to_dict(), expanded=False)
 
     with col2:
-        if st.button("✅ Create Model", type="primary", disabled=(n_components < 2)):
+        if st.button(
+            "✅ Create Model", type="primary", disabled=(n_components < 2)
+        ):
             st.session_state.model = ModelClass.get_eos_object(config=config)
             st.session_state.model_created = True
             st.success("Model created successfully!")
@@ -475,7 +496,9 @@ def show_model_configuration():
 def show_phase_envelope():
     """Phase envelope calculation page"""
     st.title("Phase Envelope Calculations")
-    st.markdown("Calculate and visualize phase envelopes for multicomponent mixtures")
+    st.markdown(
+        "Calculate and visualize phase envelopes for multicomponent mixtures"
+    )
     st.markdown("---")
 
     if not st.session_state.model_created:
@@ -537,7 +560,9 @@ def show_phase_envelope():
     with col2:
         if st.button("🔬 Calculate Phase Envelope", type="primary"):
             with st.spinner("Calculating phase envelope..."):
-                dew = model.phase_envelope_pt(z, kind="dew", t0=start_temp, p0=0.1)
+                dew = model.phase_envelope_pt(
+                    z, kind="dew", t0=start_temp, p0=0.1
+                )
                 st.session_state.envelope_results = {"dew": dew}
                 print(dew)
 
@@ -746,8 +771,12 @@ def show_gpec_diagram():
 
         with col1:
             n_temps = st.slider("Number of Isotherms", 1, 5, 3)
-            T_min = st.number_input("Min Temperature [K]", value=250.0, step=10.0)
-            T_max = st.number_input("Max Temperature [K]", value=350.0, step=10.0)
+            T_min = st.number_input(
+                "Min Temperature [K]", value=250.0, step=10.0
+            )
+            T_max = st.number_input(
+                "Max Temperature [K]", value=350.0, step=10.0
+            )
 
         with col2:
             n_points = st.slider("Points per Isotherm", 20, 100, 50)
@@ -823,7 +852,9 @@ def show_gpec_diagram():
 
                 for i, P in enumerate(pressures):
                     txys = gpec.calc_txy(P)
-                    color = px.colors.sample_colorscale("viridis", P / P_max)[0]
+                    color = px.colors.sample_colorscale("viridis", P / P_max)[
+                        0
+                    ]
 
                     for txy in txys:
                         if txy:

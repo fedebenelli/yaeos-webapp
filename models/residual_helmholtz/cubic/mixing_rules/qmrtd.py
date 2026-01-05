@@ -49,12 +49,12 @@ class QMRTDMixingRule(MixingRuleStrategy):
 
     @classmethod
     def get_description(cls) -> str:
-        return (
-            "kij varies with temperature: kij(T) = kij_0 + (kij_inf - kij_0) * T / Tref"
-        )
+        return "kij varies with temperature: kij(T) = kij_0 + (kij_inf - kij_0) * T / Tref"
 
     @classmethod
-    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
+    def setup_ui(
+        cls, n_components: int, component_names: List[str], key_prefix: str
+    ):
         st.subheader("QMRTD - Temperature-Dependent Quadratic Mixing Rule")
         st.markdown(cls.get_description())
 
@@ -95,7 +95,9 @@ class QMRTDMixingRule(MixingRuleStrategy):
         )
 
         # Optional lij
-        use_lij = st.checkbox("Use lij parameters", key=f"{key_prefix}_use_lij")
+        use_lij = st.checkbox(
+            "Use lij parameters", key=f"{key_prefix}_use_lij"
+        )
         lij_matrix = None
         if use_lij:
             st.markdown("---")

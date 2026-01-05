@@ -44,7 +44,9 @@ class QMRMixingRule(MixingRuleStrategy):
         return "Standard van der Waals mixing rules with binary interaction parameters"
 
     @classmethod
-    def setup_ui(cls, n_components: int, component_names: List[str], key_prefix: str):
+    def setup_ui(
+        cls, n_components: int, component_names: List[str], key_prefix: str
+    ):
         st.subheader("QMR - Quadratic Mixing Rule Parameters")
         st.markdown(cls.get_description())
 

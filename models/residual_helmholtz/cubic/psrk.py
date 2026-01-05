@@ -18,7 +18,9 @@ class PSRK(CEOSModelStrategy):
 
     @classmethod
     def get_description(cls) -> str:
-        return "Predictive Soave-Redlich-Kwong with built-in UNIFAC mixing rules"
+        return (
+            "Predictive Soave-Redlich-Kwong with built-in UNIFAC mixing rules"
+        )
 
     @classmethod
     def get_required_parameters(cls) -> List[str]:
@@ -103,7 +105,9 @@ class PSRK(CEOSModelStrategy):
                     group_id, count = pair.strip().split(":")
                     groups[int(group_id)] = int(count)
             except:
-                st.warning("Invalid groups format. Use: group_id:count, group_id:count")
+                st.warning(
+                    "Invalid groups format. Use: group_id:count, group_id:count"
+                )
                 groups = None
 
         return ComponentData(

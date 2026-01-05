@@ -51,7 +51,9 @@ class PengRobinson78(CEOSModelStrategy):
         w = [c.w for c in config.components]
 
         mixrule = (
-            config.mixing_rule.get_mixrule_object() if config.mixing_rule else None
+            config.mixing_rule.get_mixrule_object()
+            if config.mixing_rule
+            else None
         )
 
         return yaeos.PengRobinson78(

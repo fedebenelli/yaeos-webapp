@@ -112,7 +112,10 @@ class UNIQUACStrategy(GEModelStrategy):
             st.write("$r_i$ (Volume Parameter)")
             for i, name in enumerate(component_names):
                 val = st.number_input(
-                    f"r for {name}", value=1.0, step=0.1, key=f"{key_prefix}_r_{i}"
+                    f"r for {name}",
+                    value=1.0,
+                    step=0.1,
+                    key=f"{key_prefix}_r_{i}",
                 )
                 rs.append(val)
 
@@ -120,7 +123,10 @@ class UNIQUACStrategy(GEModelStrategy):
             st.write("$q_i$ (Surface Area Parameter)")
             for i, name in enumerate(component_names):
                 val = st.number_input(
-                    f"q for {name}", value=1.0, step=0.1, key=f"{key_prefix}_q_{i}"
+                    f"q for {name}",
+                    value=1.0,
+                    step=0.1,
+                    key=f"{key_prefix}_q_{i}",
                 )
                 qs.append(val)
 
@@ -143,7 +149,8 @@ class UNIQUACStrategy(GEModelStrategy):
                 use_matrix = True
                 if name not in ["aij", "bij"]:
                     use_matrix = st.checkbox(
-                        f"Include {name} parameters?", key=f"{key_prefix}_use_{name}"
+                        f"Include {name} parameters?",
+                        key=f"{key_prefix}_use_{name}",
                     )
 
                 if use_matrix:
