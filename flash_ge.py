@@ -136,6 +136,7 @@ def show_flash_ge_page():
                 "🔬 Calculate Flash", type="primary", key="calc_single"
             ):
                 with st.spinner("Calculating..."):
+                    print(model.stability_analysis(z, temperature))
                     result = flash_ge_single(model, z, temperature)
                     st.session_state.flash_result = result
 
